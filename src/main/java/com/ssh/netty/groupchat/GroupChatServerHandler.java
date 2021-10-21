@@ -42,7 +42,6 @@ public class GroupChatServerHandler extends SimpleChannelInboundHandler<String> 
     //断开连接, 将xx客户离开信息推送给当前在线的客户
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
-
         Channel channel = ctx.channel();
         channelGroup.writeAndFlush("[客户端]" + channel.remoteAddress() + " 离开了\n");
         System.out.println("channelGroup size" + channelGroup.size());
@@ -52,25 +51,21 @@ public class GroupChatServerHandler extends SimpleChannelInboundHandler<String> 
     //表示channel 处于活动状态, 提示 xx上线
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-
         System.out.println(ctx.channel().remoteAddress() + " 上线了~");
     }
 
     //表示channel 处于不活动状态, 提示 xx离线了
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-
         System.out.println(ctx.channel().remoteAddress() + " 离线了~");
     }
 
     //读取数据
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
-
         //获取到当前channel
         Channel channel = ctx.channel();
         //这时我们遍历channelGroup, 根据不同的情况，回送不同的消息
-
         channelGroup.forEach(ch -> {
             if (channel != ch) { //不是当前的channel,转发消息
                 ch.writeAndFlush("[客户]" + channel.remoteAddress() + " 发送了消息" + msg + "\n");
